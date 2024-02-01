@@ -79,9 +79,14 @@ class ADD():
 
 #Mnemonics
 Mnemonics={"mov":None,"add":None,"inc":None,"dec":None,"set":None,"reset":None}
+#All Move functions for addressing modes
 def MOV1(r,rb,r_val):
     r.put(rb,r_val)
-    return r.rbank[rb]
+def MOV2(i,r):
+    r.toAcc(i,r)
+def MOV3(i,r):
+    r.toReg(i,r)
+#Addition,Increment,Decrement,Set and Clear functions for their respective Mnemonics    
 
 Mnemonics["mov"]=MOV1
 z=(input("Enter keyword and parameters:")).lower()
