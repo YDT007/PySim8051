@@ -100,7 +100,7 @@ print(z2(x,*parameters))
                  
                 
 
-#x=regBank() 
+x=regBank() 
 #x.put(3,70)
 #x.print_register_bank()      
 #x1=MOV()
