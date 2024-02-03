@@ -1,5 +1,5 @@
 #There will be 4 register banks where each of them having 8 bytes starting from R0-R7 and each of them having 8 bits.By the choice of PSW register we will have to choose the register banks. like if PSW.4=0,PSW.3=0 hence R0 will be selected
-
+import csv
 #Register bank
 Acc=None
 class regBank():
@@ -86,26 +86,67 @@ def MOV2(i,r):
     r.toAcc(i,r)
 def MOV3(i,r):
     r.toReg(i,r)
+def ADD1(i,r):
+    global Acc
+    Acc=Acc+r.rbank[i]
+def  INC(i,r):
+    r.inc(i,r)
+def DEC(i,r):
+    r.dec(i,r)       
 #Addition,Increment,Decrement,Set and Clear functions for their respective Mnemonics    
 
 Mnemonics["mov"]=MOV1
-z=(input("Enter keyword and parameters:")).lower()
-z1=z.split()
-if z1[0] in Mnemonics:
-    z2=Mnemonics[z1[0]]
-parameters=[int(param) for param in z1[1:]]
+Mnemonics["add"]=ADD1
+Mnemonics["inc"]=INC
+Mnemonics["dec"]=DEC
+
+#z=(input("Enter keyword and parameters:")).lower()
+#z1=z.split()
+#if z1[0] in Mnemonics:
+#   z2=Mnemonics[z1[0]]
+#parameters=[int(param) for param in z1[1:]]
+#x=regBank()
+#print(z2(x,*parameters))
+Acc=10        
 x=regBank()
-print(z2(x,*parameters))        
- 
+x1=I_D_S_C() 
+def process_row(row):
+    # This function can be customized to perform operations on each row
+    column1, column2, column3 = row[0].split()
+    print(row[0].split())
+    column2_int = int(column2)
+    column3_int = int(column3)
+    # print(str(type(column2_int)) + " " + str(type(column3_int)))
+    #(columnn1).lower()
+    #print(x.rbank[column2_int][0])
+    z=Mnemonics[column1]
+    if column1=='mov':
+        z(x,column2_int,column3_int)
+    else:
+        z(column2_int,x1)
+            
 
-
+def read_csv_file(file_path):
+    with open(file_path, 'r') as file:
+        reader = csv.reader(file)
+        # Skip header if it exists
+        # next(reader, None)
         
-                
+        for row in reader:
+            # Assuming each row has three columns
+            if len(row) <=3:
+                process_row(row)
+
+            else:
+                print("Invalid comand")
+file_path = "D:\PySim8051\PySim8051\Command.txt"  # Replace with the actual file path
+read_csv_file(file_path)
+print(x.print_register_bank())  
+print(Acc)             
 
                  
                 
 
-x=regBank() 
 #x.put(3,70)
 #x.print_register_bank()      
 #x1=MOV()
