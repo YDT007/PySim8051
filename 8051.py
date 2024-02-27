@@ -103,7 +103,7 @@ def DEC(i,r):
 #Addition,Increment,Decrement,Set and Clear functions for their respective Mnemonics    
 
 #Mnemonics["mov"]=MOV1
-Mnemonics["add"]=ADD1
+#Mnemonics["add"]=ADD1
 Mnemonics["inc"]=INC
 Mnemonics["dec"]=DEC
 
@@ -118,44 +118,66 @@ Acc=10
 x=regBank()
 x1=I_D_S_C() 
 def selecting_mov(row):
-    if len(row)==3:
-       column1,column2,column3 = row
-       if column1=='mov' and column2.startswith('R') and column3.startswith('#'):
-          Mnemonics["mov"]=MOV1
-       elif column1=='mov' and  column2.startswith('A') and column3.startswith('R'):
-          Mnemonics["mov"]=MOV2     
-       elif column1=='mov' and  column2.startswith('R') and column3.startswith('A'):
-          Mnemonics["mov"]=MOV3
-       elif column1=='mov' and  column2.startswith('A') and column3.startswith('#'):       
-          Mnemonics["mov"]=MOV4
-       else
-           print('Invalid Syntax')  
+    #if len(row)==3:
+    x=regBank()
+    column1,column2,column3 = row
+    z=Mnemonics(column1)
+    if column1=='mov' and column2.startswith('R') and column3.startswith('#'):
+        Mnemonics["mov"]=MOV1
+        column2_int=int(column2[1:])
+        column3_int=int(column3[1:])
+        z(x,column2_int,column3_int)
+    elif column1=='mov' and  column2.startswith('A') and column3.startswith('R'):
+        Mnemonics["mov"]=MOV2
+        column3_int=int(column3[1:])
+        z(column3_int,x)     
+    elif column1=='mov' and  column2.startswith('R') and column3.startswith('A'):
+        Mnemonics["mov"]=MOV3
+        column2_int=int(column2[1:])
+        z(column2_int,x)
+    elif column1=='mov' and  column2.startswith('A') and column3.startswith('#'):       
+        Mnemonics["mov"]=MOV4
+        column3_int=int(column3[1:])
+        z(column3_int)
+    else
+        print('Invalid Syntax')  
 def selecting_add(row):
+     x=regBank()
+     z=Mnemonics(column1)
     if len(row)==3:
        column1,column2,column3 = row
        if column1=='add' and  column2.startswith('A') and column3.startswith('R'):
+          column3_int=int(column3[1:])
           Mnemonics["add"]=ADD1
+          z(column3_int,x)
        elif column1=='add' and  column2.startswith('A') and column3.startswith('#'):
+          column3_int=int(column3[1:])
           Mnemonics["add"]=ADD2
-               
+          z(column3_int)
+
+#Start working from here 28/2/24(Add sub , mul, div, merge all classes into one single class)               
 def process_row(row):
     # This function can be customized to perform operations on each row
     if len(row)==3:
-        column1,column2,column3 = row
+        column1=row[0]
+        if column1=='mov'
+           selecting_mov(row)
+        if column1='add'
+           selecting_add(row)   
     else:
-        column1,column2=row
-    print(row)
+        column1=row[0]
+    #print(row)
     # print(str(type(column2_int)) + " " + str(type(column3_int)))
     #(columnn1).lower()
     #print(x.rbank[column2_int][0])
-    z=Mnemonics[column1]
+    #z=Mnemonics[column1]
 
-    if column1=='mov' and column3.startswith('#'):
-        column3_int=int(column3[1:])
-        column2_int=int(column2[1:])
-        z(x,column2_int,column3_int)
-    else:
-        z(column2_int,x1)
+    #if column1=='mov' and column3.startswith('#'):
+        #column3_int=int(column3[1:])
+        #column2_int=int(column2[1:])
+        #z(x,column2_int,column3_int)
+    #lse:
+        #z(column2_int,x1)
             
 
 def read_csv_file(file_path):
@@ -166,8 +188,9 @@ def read_csv_file(file_path):
         
         for row in reader:
             # Assuming each row has three columns
-            row.split()
-            row[1].split(',')
+            popped_val=row.pop(1)
+            split_val=popped_val.split(',')
+            row.extend(split_val)
             if len(row)<=3:
                 process_row(row)
             else:
