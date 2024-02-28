@@ -2,7 +2,7 @@
 import csv
 #Register bank
 Acc=None
-class regBank():
+class instructions():
     def __init__(self):
         self.rbank=[]
         for i in range(8):
@@ -15,68 +15,49 @@ class regBank():
         print("--------")        
     def put(self,rb,r_val):
         self.rbank[rb]=r_val    
-
 #MOVE statement
-class MOV():
-    def toAcc(self,i,r):
+    def toAcc(self,i):
         global Acc
-        Acc=r.rbank[i]
-    def toReg(self,i,r):
+        Acc=self.rbank[i]
+    def toReg(self,i):
         global Acc
-        r.rbank[i]=Acc
+        self.rbank[i]=Acc
     def toAccimediate(self,r_val):
         global Acc
         Acc=r_val
-
-
 #INCREMENT/Decrement statement
-class I_D_S_C():
-    def inc(self,i,r):
+    def inc(self,i):
         global Acc
         if i=='Acc':
            Acc=Acc+1
         else:    
-           i_n=list(range(8))
-           if i==i_n[i]:
-              r.rbank[i]=r.rbank[i]+1
-           else:
-               print("Syntax Error") 
-    def dec(self,i,r):
+           i1=int(i[1:])
+           self.rbank[i1]=self.rbank[i1]+1 
+    def dec(self,i):
         global Acc
         if i=='Acc':
            Acc=Acc-1
         else:    
-           i_n=list(range(8))
-           if i==i_n[i]:
-              r.rbank[i]=r.rbank[i]-1
-           else:
-               print("Syntax Error") 
-    def set(self,i,r):
+           i1=int(i[1:])
+           self.rbank[i1]=self.rbank[i1]-1 
+    def set(self,i):
         global Acc
         if i=='Acc':
            Acc=1
         else:    
-           i_n=list(range(8))
-           if i==i_n[i]:
-              r.rbank[i]=1
-           else:
-               print("Syntax Error")   
+           i1=int(i[1:])
+           self.rbank[i1]=1           
     def reset(self,i,r):
         global Acc
         if i=='Acc':
             Acc=0
         else:    
-           i_n=list(range(8))
-           if i==i_n[i]:
-              r.rbank[i]=0
-           else:
-               print("Syntax Error")  
-
+           i1=int(i[1:])
+           self.rbank[i1]=0 
 #ADDITION statement
-class ADD():
-    def add(self,i,r):
-        global Acc
-        Acc=Acc+r.rbank[i]
+    #def add(self,i):
+        #global Acc
+        #Acc=Acc+self.rbank[i]
 
 #Mnemonics
 Mnemonics={"mov":None,"add":None,"inc":None,"dec":None,"set":None,"reset":None}
@@ -84,9 +65,9 @@ Mnemonics={"mov":None,"add":None,"inc":None,"dec":None,"set":None,"reset":None}
 def MOV1(r,rb,r_val):
     r.put(rb,r_val)
 def MOV2(i,r):
-    r.toAcc(i,r)
+    r.toAcc(i)
 def MOV3(i,r):
-    r.toReg(i,r)
+    r.toReg(i)
 def MOV4(r_val):
     global Acc
     Acc=r_val    
@@ -96,10 +77,10 @@ def ADD1(i,r):
 def ADD2(r_val):
     global Acc
     Acc=Acc+r_val
-def  INC(i,r):
-    r.inc(i,r)
+def INC(i,r):
+    r.inc(i)
 def DEC(i,r):
-    r.dec(i,r)       
+    r.dec(i)       
 #Addition,Increment,Decrement,Set and Clear functions for their respective Mnemonics    
 
 #Mnemonics["mov"]=MOV1
@@ -115,11 +96,10 @@ Mnemonics["dec"]=DEC
 #x=regBank()
 #print(z2(x,*parameters))
 Acc=10        
-x=regBank()
-x1=I_D_S_C() 
+x=instructions()
 def selecting_mov(row):
     #if len(row)==3:
-    x=regBank()
+    global x
     column1,column2,column3 = row
     z=Mnemonics(column1)
     if column1=='mov' and column2.startswith('R') and column3.startswith('#'):
@@ -142,8 +122,8 @@ def selecting_mov(row):
     else
         print('Invalid Syntax')  
 def selecting_add(row):
-     x=regBank()
-     z=Mnemonics(column1)
+    global x
+    z=Mnemonics(column1)
     if len(row)==3:
        column1,column2,column3 = row
        if column1=='add' and  column2.startswith('A') and column3.startswith('R'):
@@ -154,16 +134,25 @@ def selecting_add(row):
           column3_int=int(column3[1:])
           Mnemonics["add"]=ADD2
           z(column3_int)
-
-#Start working from here 28/2/24(Add sub , mul, div, merge all classes into one single class)               
+#Start working from here 28/2/24(Add sub , mul, div, initialization of SJMP and DJNZ)               
 def process_row(row):
     # This function can be customized to perform operations on each row
     if len(row)==3:
         column1=row[0]
-        if column1=='mov'
+        if column1=='mov':
            selecting_mov(row)
-        if column1='add'
-           selecting_add(row)   
+        elif column1=='add':
+           selecting_add(row)
+        elif column1=='inc':
+           column2=row[1]
+           z=Mnemonics(column1)
+           global x
+           z(column2,x)
+        elif column1=='dec':
+           column2=row[1]
+           z=Mnemonics(column1)
+           global x
+           z(column2,x)         
     else:
         column1=row[0]
     #print(row)
