@@ -1,3 +1,4 @@
+#There will be 4 register banks where each of them having 8 bytes starting from R0-R7 and each of them having 8 bits.By the choice of PSW register we will have to choose the register banks. like if PSW.4=0,PSW.3=0 hence R0 will be selected
 import csv
 from tkinter import Tk, Text, Label, Frame, END
 
