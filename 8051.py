@@ -379,4 +379,4 @@ read_csv_file(file_path)
 # Display output in Tkinter window
 display_output()
 
-# Addition needed SJMP; MOV Rx,B ; MOV B,#-- ; MOV A,B ; MOV B,A ; Multiplication 8*8=16bits ; Division
+# Addition needed: SJMP; MOV Rx,B ; MOV B,#-- ; MOV A,B ; MOV B,A ; Multiplication 8*8=16bits ; Division
