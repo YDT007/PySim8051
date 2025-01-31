@@ -1,0 +1,9 @@
+mov A #4
+mov R0 A
+dec R0
+Here:
+mov B R0
+loop1:
+mul AB
+djnz R0 Here
+END:

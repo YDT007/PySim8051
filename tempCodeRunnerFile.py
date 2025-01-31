@@ -3,7 +3,6 @@ from tkinter import Tk, Text, Label, Frame, END
 
 # Register bank
 Acc = 0  # Initialize accumulator to 0
-B= 0
 PSW = 0  # Program Status Word to select register bank
 
 class Instructions:
@@ -33,13 +32,12 @@ class Instructions:
         global Acc
         self.rbank[i][0] = Acc
 
-    def toB(self, i):
-        #Move an immediate value to the accumulator.
-        global B
-        B = self.rbank[i][0]
-    
+    def toAccImmediate(self, r_val):
+        """Move an immediate value to the accumulator."""
+        global Acc
+        Acc = r_val
 
-# INCREMENT/Decrement statement
+    # INCREMENT/Decrement statement
     def inc(self, i):
         """Increment a register or the accumulator."""
         global Acc
@@ -88,12 +86,6 @@ class Instructions:
         global Acc
         Acc -= self.rbank[i][0]
 
-    def mul(self):
-        global Acc
-        global B
-        Acc=Acc*B # B=high order 8 bits , A= low order 8 bits ; Considering mul only 8bits
-
-
 # Mnemonics dictionary
 Mnemonics = {
     "mov": None,
@@ -106,7 +98,6 @@ Mnemonics = {
     "jz": None,
     "jnz": None,
     "djnz": None,
-    "mul":None
 }
 
 # All Move functions for addressing modes
@@ -126,14 +117,6 @@ def MOV4(r_val):
     """Move immediate value to the accumulator."""
     global Acc
     Acc = r_val
-
-def MOV5(r_val):
-    """Move immediate value to B"""
-    global B
-    B = r_val  
-
-def MOV6(i,r):
-    r.toB(i)
 
 def ADD1(i, r):
     """Add the value of a register to the accumulator."""
@@ -157,45 +140,35 @@ def SUB1(i, r):
     """Subtract the value of a register from the accumulator."""
     r.sub(i)
 
-def MUL(r):
-    r.mul()
-
-def JZ(label):
+def JZ(label, r):
     """Jump to label if the accumulator is zero."""
     global Acc
     if Acc == 0:
         return label
-    else:
-        return False
 
-def JNZ(label):
+def JNZ(label, r):
     """Jump to label if the accumulator is not zero."""
     global Acc
     if Acc != 0:
         return label
-    else:
-        return False
 
 def DJNZ(i, label, r):
     """Decrement a register and jump to label if the register is not zero."""
+    global Acc
     i1 = int(i[1:])
     r.rbank[i1][0] -= 1
     if r.rbank[i1][0] != 0:
         return label
-    else:
-        return False
-    
 
 # Assign functions to mnemonics
-#Mnemonics["mov"] = MOV1
-#Mnemonics["add"] = ADD1
+Mnemonics["mov"] = MOV1
+Mnemonics["add"] = ADD1
 Mnemonics["inc"] = INC
 Mnemonics["dec"] = DEC
-Mnemonics["sub"] = SUB1 
+Mnemonics["sub"] = SUB1
 Mnemonics["jz"] = JZ
 Mnemonics["jnz"] = JNZ
 Mnemonics["djnz"] = DJNZ
-Mnemonics["mul"] = MUL
 
 # Initialize the instruction set
 x = Instructions()
@@ -221,34 +194,16 @@ def selecting_mov(row):
     if column1 == 'mov' and column2.startswith('R') and column3.startswith('#'):
         column2_int = int(column2[1:])
         column3_int = parse_value(column3)
-        Mnemonics["mov"]=MOV1
         Mnemonics["mov"](x, column2_int, column3_int)
-
     elif column1 == 'mov' and column2 == 'A' and column3.startswith('R'):
         column3_int = int(column3[1:])
-        Mnemonics["mov"]=MOV2
         Mnemonics["mov"](column3_int, x)
-
     elif column1 == 'mov' and column2.startswith('R') and column3 == 'A':
         column2_int = int(column2[1:])
-        Mnemonics["mov"]=MOV3
         Mnemonics["mov"](column2_int, x)
-
     elif column1 == 'mov' and column2 == 'A' and column3.startswith('#'):
         column3_int = parse_value(column3)
-        Mnemonics["mov"]=MOV4
         Mnemonics["mov"](column3_int)
-
-    elif column1 == 'mov' and column2 == 'B' and column3.startswith('#'):
-        column3_int = parse_value(column3)
-        Mnemonics["mov"]=MOV5
-        Mnemonics["mov"](column3_int) 
-
-    elif column1 == 'mov' and column2 == 'B' and column3.startswith("R"):
-        column3_int = int(column3[1:])
-        Mnemonics["mov"]=MOV6
-        Mnemonics["mov"](column3_int,x)   
-
     else:
         print('Invalid Syntax')
 
@@ -258,10 +213,8 @@ def selecting_add(row):
     column1, column2, column3 = row
     if column1 == 'add' and column2 == 'A' and column3.startswith('R'):
         column3_int = int(column3[1:])
-        Mnemonics["add"]=ADD1
         Mnemonics["add"](column3_int, x)
     elif column1 == 'add' and column2 == 'A' and column3.startswith('#'):
-        Mnemonics["add"]=ADD2
         column3_int = parse_value(column3)
         Mnemonics["add"](column3_int)
 
@@ -275,7 +228,7 @@ def selecting_sub(row):
 
 def process_row(row):
     """Process a row of instructions."""
-    if len(row) <=3:
+    if len(row) == 3:
         column1 = row[0]
         if column1 == 'mov':
             selecting_mov(row)
@@ -283,23 +236,15 @@ def process_row(row):
             selecting_add(row)
         elif column1 == 'sub':
             selecting_sub(row)
-        elif column1 == 'mul':
-            Mnemonics[column1](x)    
         elif column1 == 'inc':
             column2 = row[1]
             Mnemonics[column1](column2, x)
         elif column1 == 'dec':
             column2 = row[1]
             Mnemonics[column1](column2, x)
-        elif column1 in ['jz', 'jnz']:
+        elif column1 in ['jz', 'jnz', 'djnz']:
             column2 = row[1]
-            label = Mnemonics[column1](column2)
-            if label:
-                return label
-        elif column1=="djnz":
-            column2 = row[1]
-            column3 = row[2]
-            label = Mnemonics[column1](column2,column3,x)
+            label = Mnemonics[column1](column2, x)
             if label:
                 return label
     else:
@@ -311,16 +256,11 @@ def read_csv_file(file_path):
     with open(file_path, 'r') as file:
         reader = csv.reader(file)
         rows = list(reader)
-        print(rows)
-        print(len(rows))
         
         # First pass to collect labels
         for i, row in enumerate(rows):
-            X=row[0].strip().encode('ascii', 'ignore').decode()
-            #print(f"{i} is {row[0]} and return is {X}")
-            if X.endswith(':'):
-                labels[X[:-1]] = i
-        print(labels)    
+            if len(row) == 1 and row[0].endswith(':'):
+                labels[row[0][:-1]] = i
 
         # Second pass to execute instructions
         i = 0
@@ -328,12 +268,8 @@ def read_csv_file(file_path):
             row = rows[i]
             if len(row) == 1 and row[0].endswith(':'):
                 i += 1
-                if i>len(rows):
-                    break
                 continue
-            row = rows[i]    
-            split_val = row[0].split()  # Split by spaces
-            print(f"Processing: {split_val}")  # Debugging statement
+            split_val = row[0].split(',')  # Split by comma
             if len(split_val) <= 3:
                 result = process_row(split_val)
                 if result:
@@ -341,6 +277,7 @@ def read_csv_file(file_path):
                 else:
                     i += 1
             else:
+                print(len(split_val))
                 print("Invalid command")
                 i += 1
 
@@ -372,10 +309,8 @@ def display_output():
     root.mainloop()
 
 # Main execution
-file_path = "D:\PySim8051\PySim8051\Input.txt"  # Replace with the actual file path
+file_path = "D:\PySim8051\PySim8051\Command.txt"  # Replace with the actual file path
 read_csv_file(file_path)
 
 # Display output in Tkinter window
 display_output()
-
-# Addition needed SJMP; MOV Rx,B ; MOV B,#-- ; MOV A,B ; MOV B,A ; Multiplication 8*8=16bits ; Division
