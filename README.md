@@ -81,16 +81,16 @@ Welcome to the **8051 Simulator**! This tool allows you to simulate the behavior
    - Calculate the factorial of a number using multiplication.
    - Code:
      ```
-    mov A #5
-    mov R0 A
-    dec R0
-    Here:
-    mov B R0
-    loop1:
-    mul AB
-    djnz R0 Here
-    END:
-    ```
+       mov A #5
+       mov R0 A
+       dec R0
+       Here:
+       mov B R0
+       loop1:
+       mul AB
+       djnz R0 Here
+       END:
+       ```
 
 #### 2. **Simple Addition**
    - Add two numbers and store the result in the accumulator.
