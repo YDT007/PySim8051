@@ -80,7 +80,7 @@ Welcome to the **8051 Simulator**! This tool allows you to simulate the behavior
 #### 1. **Factorial Calculation**
    - Calculate the factorial of a number using multiplication.
    - Code:
-    ```
+     ```
     mov A #5
     mov R0 A
     dec R0
