@@ -96,9 +96,9 @@ Welcome to the **8051 Simulator**! This tool allows you to simulate the behavior
    - Add two numbers and store the result in the accumulator.
    - Code:
      ```
-     mov A, #10
-     mov R0, #20
-     add A, R0
+     mov A #10
+     mov R0 #20
+     add A R0
      end:
      ```
 
