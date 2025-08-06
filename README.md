@@ -127,4 +127,4 @@ Welcome to the **8051 Simulator**! This tool allows you to simulate the behavior
 
 ---
 
-Enjoy using the **8051 Simulator**! If you have any questions or need further assistance, feel free to reach out. Happy coding! 🚀
+Enjoy using the **8051 Simulator**!
